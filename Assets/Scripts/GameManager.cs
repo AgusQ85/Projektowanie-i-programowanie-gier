@@ -1,10 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// hihihihih idziemy zbierać śnieg 
-// Gorące paszteciki barszczyk czerwony
-// Okej to idziemy zjeść sobie ;)
-// mam damplingi 
+// Mapa działa! Brawo!
 namespace SA
 {
 
