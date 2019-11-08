@@ -1,5 +1,5 @@
 ﻿using System;
-//grrr
+// git
 namespace SA
 {
 public class Note

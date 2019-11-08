@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// Mapa działa! Brawo!
+// git
 namespace SA
 {
 
