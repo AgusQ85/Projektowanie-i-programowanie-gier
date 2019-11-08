@@ -2,10 +2,11 @@
 
 namespace SA
 {
-public class Class1
+public class Note
 {
-	public Class1()
-	{
-	}
+        public int x;
+        public int y;
+
+	
 }
 }
