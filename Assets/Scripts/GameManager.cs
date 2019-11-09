@@ -12,20 +12,26 @@ namespace SA
         public int maxWidth = 17;
         public Color color1;
         public Color color2;
+        public Color appleColor = Color.red;
         public Color playerColor = Color.black;
 
         public Transform cameraHolder;
         GameObject playerObj;
+        GameObject appleObj;
         Node playerNode;
+        Node appleNode;
 
 
         GameObject mapObject;
         SpriteRenderer mapRender;
 
         Node[,] grid;
+        List<Node> availableNodes = new List<Node>();
         bool up, left, right, down;
+        public float moveRate = 0.5f;
+        float timer;
 
-        bool movePlayer;
+        //bool movePlayer;
         Direction curdirection;
         public enum Direction
         {
@@ -37,6 +43,8 @@ namespace SA
             CreateMap();
             PlacePlayer();
             PlaceCamera();
+            CreateApple();
+            curdirection = Direction.right;
         }
 
 
@@ -68,6 +76,7 @@ namespace SA
 
                     };
                     grid[x, y] = n;
+                    availableNodes.Add(n);
                     if (x % 2 != 0)
                     {
                         if (y % 2 != 0)
@@ -93,20 +102,12 @@ namespace SA
                     }
 
                 }
-            } 
+            }
             txt.filterMode = FilterMode.Point;
             txt.Apply();
             Rect rect = new Rect(0, 0, maxWidth, maxHeigt);
             Sprite sprite = Sprite.Create(txt, rect, Vector2.zero, 1, 0, SpriteMeshType.FullRect);
             mapRender.sprite = sprite;
-        }
-
-        void PlaceCamera()
-        {
-            Node n = GetNode(maxWidth / 2, maxHeigt / 2);
-            Vector3 p =n.worldPosition;
-            p += Vector3.one * .5f;
-            cameraHolder.position = p;
         }
         void PlacePlayer()
         {
@@ -118,6 +119,23 @@ namespace SA
             playerNode = GetNode(3, 3);
             playerObj.transform.position = playerNode.worldPosition;
         }
+        void PlaceCamera()
+        {
+            Node n = GetNode(maxWidth / 2, maxHeigt / 2);
+            Vector3 p = n.worldPosition;
+            p += Vector3.one * .5f;
+            cameraHolder.position = p;
+        }
+        void CreateApple()
+        {
+            appleObj = new GameObject("Apple");
+            SpriteRenderer appleRenderer = appleObj.AddComponent<SpriteRenderer>();
+            appleRenderer.sprite = createSprite(appleColor);
+            appleRenderer.sortingOrder = 1;
+            RandomlyPlaceApple();
+        }
+
+
         #endregion
 
         #region Update
@@ -126,7 +144,13 @@ namespace SA
         {
             GetInput();
             SetPlayerDirection();
-            MovePlayer();
+            timer += Time.deltaTime;
+            if (timer > moveRate)
+            {
+                timer = 0;
+                MovePlayer();
+            }
+
         }
 
         void GetInput()
@@ -142,30 +166,27 @@ namespace SA
             if (up)
             {
                 curdirection = Direction.up;
-                movePlayer = true;
+
             }
             else if (down)
             {
                 curdirection = Direction.down;
-                movePlayer = true;
+
             }
             else if (left)
             {
                 curdirection = Direction.left;
-                movePlayer = true;
+
             }
             else if (right)
             {
                 curdirection = Direction.right;
-                movePlayer = true;
+
             }
         }
         void MovePlayer()
         {
-            if (!movePlayer)
-                return;
 
-            movePlayer = false;
             int x = 0;
             int y = 0;
             switch (curdirection)
@@ -184,18 +205,49 @@ namespace SA
                     break;
             }
             Node targetNode = GetNode(playerNode.x + x, playerNode.y + y);
-            if(targetNode == null)
+            if (targetNode == null)
             {
                 // Game over
-            }else
+            }
+            else
             {
+                bool isScore = false;
+                if(targetNode == appleNode)
+                {
+                    isScore = true;
+                    
+                }
+                availableNodes.Remove(playerNode);
                 playerObj.transform.position = targetNode.worldPosition;
                 playerNode = targetNode;
+                availableNodes.Add(playerNode);
+
+                if(isScore)
+                {
+                    if(availableNodes.Count > 0)
+                    {
+                        RandomlyPlaceApple();
+                    }else
+                    {
+
+                    }
+                    
+                }
             }
         }
         #endregion
 
+
+
         #region Utilities
+
+        void RandomlyPlaceApple()
+        {
+            int ran = Random.Range(0, availableNodes.Count);
+            Node n = availableNodes[ran];
+            appleObj.transform.position = n.worldPosition;
+            appleNode = n;
+        }
         Node GetNode(int x, int y)
         {
             if (x < 0 || x > maxWidth - 1 || y < 0 || y > maxHeigt - 1)

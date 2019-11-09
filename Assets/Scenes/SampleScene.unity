@@ -265,10 +265,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHeigt: 15
   maxWidth: 17
-  color1: {r: 1, g: 0.6325699, b: 0.0047169924, a: 1}
-  color2: {r: 1, g: 0, b: 0.14509805, a: 1}
+  color1: {r: 0.5112703, g: 0.5471698, b: 0.20906018, a: 1}
+  color2: {r: 0.39364052, g: 1, b: 0, a: 1}
+  appleColor: {r: 1, g: 0, b: 0, a: 1}
   playerColor: {r: 0, g: 0, b: 0, a: 1}
   cameraHolder: {fileID: 1338624462}
+  moveRate: 0.5
 --- !u!4 &1957338169
 Transform:
   m_ObjectHideFlags: 0
