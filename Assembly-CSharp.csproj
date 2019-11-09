@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Node.cs" />
+    <Compile Include="Assets\Scripts\SpecialNode.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Dawid/source/repos/AgusQ85/Projektowanie-i-programowanie-gier/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

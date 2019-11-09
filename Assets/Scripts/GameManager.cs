@@ -18,8 +18,10 @@ namespace SA
         public Transform cameraHolder;
         GameObject playerObj;
         GameObject appleObj;
+        GameObject tailParent;
         Node playerNode;
         Node appleNode;
+        Sprite playerSprite;
 
 
         GameObject mapObject;
@@ -27,6 +29,7 @@ namespace SA
 
         Node[,] grid;
         List<Node> availableNodes = new List<Node>();
+        List<SpecialNode> tail = new List<SpecialNode>();
         bool up, left, right, down;
         public float moveRate = 0.5f;
         float timer;
@@ -113,11 +116,14 @@ namespace SA
         {
             playerObj = new GameObject("Player");
             SpriteRenderer playerRender = playerObj.AddComponent<SpriteRenderer>();
-            playerRender.sprite = createSprite(playerColor);
+            playerSprite = createSprite(playerColor);
+            playerRender.sprite = playerSprite;
             playerRender.sortingOrder = 1;
             playerObj.transform.position = GetNode(3, 3).worldPosition;
             playerNode = GetNode(3, 3);
             playerObj.transform.position = playerNode.worldPosition;
+            tailParent = new GameObject("tailParent");
+
         }
         void PlaceCamera()
         {
@@ -212,27 +218,61 @@ namespace SA
             else
             {
                 bool isScore = false;
-                if(targetNode == appleNode)
+                if (targetNode == appleNode)
                 {
                     isScore = true;
-                    
+
                 }
-                availableNodes.Remove(playerNode);
+
+                Node previousNode = playerNode;
+                availableNodes.Add(previousNode);
                 playerObj.transform.position = targetNode.worldPosition;
                 playerNode = targetNode;
-                availableNodes.Add(playerNode);
-
-                if(isScore)
+                availableNodes.Remove(playerNode);
+                if (isScore)
                 {
-                    if(availableNodes.Count > 0)
+                    tail.Add(CreateTailNode(previousNode.x, previousNode.y));
+                    availableNodes.Remove(previousNode);
+                }
+                MoveTail();
+                if (isScore)
+                {
+                    if (availableNodes.Count > 0)
                     {
+
                         RandomlyPlaceApple();
-                    }else
+                    }
+                    else
                     {
 
                     }
-                    
+
                 }
+            }
+        }
+
+        void MoveTail()
+        {
+            Node prevNode = null;
+            for (int i = 0; i < tail.Count; i++)
+            {
+                SpecialNode p = tail[i];
+                availableNodes.Add(p.node);
+
+                if(i == 0)
+                {
+                    prevNode = p.node;
+                    p.node = playerNode;
+                }
+                else
+                {
+                    Node prev = p.node;
+                    p.node = prevNode;
+                    prevNode = prev;
+                }
+
+                availableNodes.Remove(p.node);
+                p.obj.transform.position = p.node.worldPosition;
             }
         }
         #endregion
@@ -253,6 +293,20 @@ namespace SA
             if (x < 0 || x > maxWidth - 1 || y < 0 || y > maxHeigt - 1)
                 return null;
             return grid[x, y];
+        }
+
+        SpecialNode CreateTailNode(int x, int y)
+        {
+            SpecialNode s = new SpecialNode();
+            s.node = GetNode(x, y);
+            s.obj = new GameObject();
+            s.obj.transform.parent = tailParent.transform;
+            s.obj.transform.position = s.node.worldPosition;
+            SpriteRenderer r = s.obj.AddComponent<SpriteRenderer>();
+            r.sprite = createSprite(playerColor);
+            r.sortingOrder = 1;
+
+            return s;
         }
         Sprite createSprite(Color targetColor)
         {

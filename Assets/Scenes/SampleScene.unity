@@ -270,7 +270,7 @@ MonoBehaviour:
   appleColor: {r: 1, g: 0, b: 0, a: 1}
   playerColor: {r: 0, g: 0, b: 0, a: 1}
   cameraHolder: {fileID: 1338624462}
-  moveRate: 0.5
+  moveRate: 0.15
 --- !u!4 &1957338169
 Transform:
   m_ObjectHideFlags: 0
