@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 // git
+
 namespace SA
 {
 
@@ -130,7 +131,7 @@ namespace SA
 
         void GetInput()
         {
-            up = Input.GetButtonUp("Up");
+            up = Input.GetButtonDown("Up");
             down = Input.GetButtonDown("Down");
             left = Input.GetButtonDown("Left");
             right = Input.GetButtonDown("Right");
