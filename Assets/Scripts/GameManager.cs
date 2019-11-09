@@ -14,6 +14,8 @@ namespace SA
 
         GameObject mapObject;
         SpriteRenderer mapRender;
+
+        Node
         private void Start()
         {
             CreateMap();

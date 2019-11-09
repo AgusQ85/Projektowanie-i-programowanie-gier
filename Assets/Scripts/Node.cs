@@ -2,7 +2,7 @@
 // git
 namespace SA
 {
-public class Note
+public class Node
 {
         public int x;
         public int y;
