@@ -121,7 +121,9 @@ namespace SA
             playerRender.sortingOrder = 1;
             playerObj.transform.position = GetNode(3, 3).worldPosition;
             playerNode = GetNode(3, 3);
-            playerObj.transform.position = playerNode.worldPosition;
+            PlacePlayerObject(playerObj, playerNode.worldPosition);
+            //playerObj.transform.position = playerNode.worldPosition;
+            playerObj.transform.localScale = Vector3.one * 1.2f;
             tailParent = new GameObject("tailParent");
 
         }
@@ -226,15 +228,18 @@ namespace SA
 
                 Node previousNode = playerNode;
                 availableNodes.Add(previousNode);
-                playerObj.transform.position = targetNode.worldPosition;
-                playerNode = targetNode;
-                availableNodes.Remove(playerNode);
+
                 if (isScore)
                 {
                     tail.Add(CreateTailNode(previousNode.x, previousNode.y));
                     availableNodes.Remove(previousNode);
                 }
                 MoveTail();
+                PlacePlayerObject(playerObj, targetNode.worldPosition);
+
+                playerObj.transform.position = targetNode.worldPosition;
+                playerNode = targetNode;
+                availableNodes.Remove(playerNode);
                 if (isScore)
                 {
                     if (availableNodes.Count > 0)
@@ -248,6 +253,9 @@ namespace SA
                     }
 
                 }
+                // kod
+
+
             }
         }
 
@@ -259,7 +267,7 @@ namespace SA
                 SpecialNode p = tail[i];
                 availableNodes.Add(p.node);
 
-                if(i == 0)
+                if (i == 0)
                 {
                     prevNode = p.node;
                     p.node = playerNode;
@@ -272,7 +280,8 @@ namespace SA
                 }
 
                 availableNodes.Remove(p.node);
-                p.obj.transform.position = p.node.worldPosition;
+                PlacePlayerObject(p.obj, p.node.worldPosition);
+                //p.obj.transform.position = p.node.worldPosition;
             }
         }
         #endregion
@@ -281,10 +290,17 @@ namespace SA
 
         #region Utilities
 
+        void PlacePlayerObject(GameObject obj, Vector3 pos)
+        {
+            pos += Vector3.one * .5f;
+            obj.transform.position = pos;
+        }
+
         void RandomlyPlaceApple()
         {
             int ran = Random.Range(0, availableNodes.Count);
             Node n = availableNodes[ran];
+            PlacePlayerObject(appleObj, n.worldPosition);
             appleObj.transform.position = n.worldPosition;
             appleNode = n;
         }
@@ -302,6 +318,7 @@ namespace SA
             s.obj = new GameObject();
             s.obj.transform.parent = tailParent.transform;
             s.obj.transform.position = s.node.worldPosition;
+            s.obj.transform.localScale = Vector3.one * .95f;
             SpriteRenderer r = s.obj.AddComponent<SpriteRenderer>();
             r.sprite = createSprite(playerColor);
             r.sortingOrder = 1;
