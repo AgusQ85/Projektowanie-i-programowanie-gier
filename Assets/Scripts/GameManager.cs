@@ -33,9 +33,11 @@ namespace SA
         List<Node> availableNodes = new List<Node>();
         List<SpecialNode> tail = new List<SpecialNode>();
         bool up, left, right, down;
+
         public bool isGameOver;
         public bool isFirstInput;
         public float moveRate = 0.5f;
+
         float timer;
 
         //bool movePlayer;
@@ -191,11 +193,10 @@ namespace SA
                 return;
             GetInput();
             SetPlayerDirection();
+
             if (isFirstInput)
             {
-
-
-                
+               
                 timer += Time.deltaTime;
                 if (timer > moveRate)
                 {
@@ -203,14 +204,15 @@ namespace SA
                     curDirection = targetDirection;
                     MovePlayer();
                 }
-            }else
+            }
+            else
             {
-                if(up || down || left || right)
+                if (up || down || left || right)
                 {
                     isFirstInput = true;
                     firstInput.Invoke();
                 }
-            }
+             }
 
         }
 
@@ -366,6 +368,7 @@ namespace SA
             isGameOver = true;
             isFirstInput = false;
         }
+
 
         bool isOpposite(Direction d)
         {
