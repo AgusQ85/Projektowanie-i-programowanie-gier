@@ -20,6 +20,7 @@ namespace SA
         GameObject appleObj;
         GameObject tailParent;
         Node playerNode;
+        Node prevPlayerNode;
         Node appleNode;
         Sprite playerSprite;
 
@@ -35,7 +36,8 @@ namespace SA
         float timer;
 
         //bool movePlayer;
-        Direction curdirection;
+        Direction targetDirection;
+        Direction curDirection;
         public enum Direction
         {
             up, down, left, right
@@ -47,7 +49,7 @@ namespace SA
             PlacePlayer();
             PlaceCamera();
             CreateApple();
-            curdirection = Direction.right;
+            targetDirection = Direction.right;
         }
 
 
@@ -119,11 +121,11 @@ namespace SA
             playerSprite = createSprite(playerColor);
             playerRender.sprite = playerSprite;
             playerRender.sortingOrder = 1;
-           playerNode = GetNode(3, 3);
+            playerNode = GetNode(3, 3);
             PlacePlayerObject(playerObj, playerNode.worldPosition);
-           
-           // PlacePlayerObject(playerObj, playerNode.worldPosition);
-            
+
+            // PlacePlayerObject(playerObj, playerNode.worldPosition);
+
             playerObj.transform.localScale = Vector3.one * 1.2f;
             tailParent = new GameObject("tailParent");
 
@@ -157,6 +159,7 @@ namespace SA
             if (timer > moveRate)
             {
                 timer = 0;
+                curDirection = targetDirection;
                 MovePlayer();
             }
 
@@ -174,23 +177,39 @@ namespace SA
         {
             if (up)
             {
-                curdirection = Direction.up;
-
+                setDirection(Direction.up);
+                //if (!isOpposite(Direction.up))
+                  //  curdirection = Direction.up;
             }
             else if (down)
             {
-                curdirection = Direction.down;
+                setDirection(Direction.down);
+                //if (!isOpposite(Direction.down))
+                //    curdirection = Direction.down;
 
             }
             else if (left)
             {
-                curdirection = Direction.left;
+                setDirection(Direction.left);
+                //if (!isOpposite(Direction.left))
+                //    curdirection = Direction.left;
 
             }
             else if (right)
             {
-                curdirection = Direction.right;
+                setDirection(Direction.right);
+                //if (!isOpposite(Direction.right))
+                //    curdirection = Direction.right;
 
+            }
+        }
+
+        void setDirection(Direction d)
+        {
+            if(!isOpposite(d))
+            {
+                targetDirection = d;
+                
             }
         }
         void MovePlayer()
@@ -198,7 +217,7 @@ namespace SA
 
             int x = 0;
             int y = 0;
-            switch (curdirection)
+            switch (curDirection)
             {
                 case Direction.up:
                     y += 1;
@@ -220,45 +239,53 @@ namespace SA
             }
             else
             {
-                bool isScore = false;
-                if (targetNode == appleNode)
+                if (isTailNode(targetNode))
                 {
-                    isScore = true;
-
+                    // Game over
                 }
-
-                Node previousNode = playerNode;
-                availableNodes.Add(previousNode);
-
-                if (isScore)
+                else
                 {
-                    tail.Add(CreateTailNode(previousNode.x, previousNode.y));
-                    availableNodes.Remove(previousNode);
-                }
-                MoveTail();
-                PlacePlayerObject(playerObj, targetNode.worldPosition);
-                
-                playerNode = targetNode;
-                availableNodes.Remove(playerNode);
 
-                //PlacePlayerObject(playerObj, targetNode.worldPosition);
 
-                
-                if (isScore)
-                {
-                    if (availableNodes.Count > 0)
+                    bool isScore = false;
+                    if (targetNode == appleNode)
                     {
-
-                        RandomlyPlaceApple();
-                    }
-                    else
-                    {
+                        isScore = true;
 
                     }
 
+                    Node previousNode = playerNode;
+                    availableNodes.Add(previousNode);
+
+                    if (isScore)
+                    {
+                        tail.Add(CreateTailNode(previousNode.x, previousNode.y));
+                        availableNodes.Remove(previousNode);
+                    }
+                    MoveTail();
+                    PlacePlayerObject(playerObj, targetNode.worldPosition);
+
+                    playerNode = targetNode;
+                    availableNodes.Remove(playerNode);
+
+                    //PlacePlayerObject(playerObj, targetNode.worldPosition);
+
+
+                    if (isScore)
+                    {
+                        if (availableNodes.Count > 0)
+                        {
+
+                            RandomlyPlaceApple();
+                        }
+                        else
+                        {
+
+                        }
+
+                    }
+                    // kod
                 }
-                // kod
-                
 
             }
         }
@@ -285,7 +312,7 @@ namespace SA
 
                 availableNodes.Remove(p.node);
                 PlacePlayerObject(p.obj, p.node.worldPosition);
-                
+
             }
         }
         #endregion
@@ -293,6 +320,48 @@ namespace SA
 
 
         #region Utilities
+
+        bool isOpposite(Direction d)
+        {
+            switch (d)
+            {
+                default:
+                case Direction.up:
+                    if (curDirection == Direction.down)
+                        return true;
+                    else
+                        return false;
+                case Direction.down:
+                    if (curDirection == Direction.up)
+                        return true;
+                    else
+                        return false;
+
+                case Direction.left:
+                    if (curDirection == Direction.right)
+                        return true;
+                    else
+                        return false;
+                case Direction.right:
+
+                    if (curDirection == Direction.left)
+                        return true;
+                    else
+                        return false;
+            }
+        }
+
+        bool isTailNode(Node n)
+        {
+            for (int i = 0; i < tail.Count; i++)
+            {
+                if (tail[i].node == n)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         void PlacePlayerObject(GameObject obj, Vector3 pos)
         {
@@ -305,8 +374,15 @@ namespace SA
             int ran = Random.Range(0, availableNodes.Count);
             Node n = availableNodes[ran];
             PlacePlayerObject(appleObj, n.worldPosition);
-           // appleObj.transform.position = n.worldPosition;
+
+            // appleObj.transform.position = n.worldPosition;
             appleNode = n;
+        }
+
+        bool IsValidDirection(Node targetNode)
+        {
+
+            return targetNode == prevPlayerNode;
         }
         Node GetNode(int x, int y)
         {
@@ -322,8 +398,7 @@ namespace SA
             s.obj = new GameObject();
             s.obj.transform.parent = tailParent.transform;
             s.obj.transform.position = s.node.worldPosition;
-            s.obj.transform.localScale = Vector3.one * .85f;
-           // s.obj.transform.localScale = Vector3.one * .95f;
+            s.obj.transform.localScale = Vector3.one * .95f;
             SpriteRenderer r = s.obj.AddComponent<SpriteRenderer>();
             r.sprite = playerSprite;
             r.sortingOrder = 1;
@@ -337,7 +412,7 @@ namespace SA
 
             txt.filterMode = FilterMode.Point;
             Rect rect = new Rect(0, 0, 1, 1);
-            return Sprite.Create(txt, rect, Vector2.one *.5f, 1, 0, SpriteMeshType.FullRect);
+            return Sprite.Create(txt, rect, Vector2.one * .5f, 1, 0, SpriteMeshType.FullRect);
 
         }
         #endregion
