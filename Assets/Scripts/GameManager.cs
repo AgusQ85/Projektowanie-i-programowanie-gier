@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 // git
 
 namespace SA
@@ -42,14 +43,45 @@ namespace SA
         {
             up, down, left, right
         }
+
+        public UnityEvent onStart;
+        public UnityEvent onGamOver;
+        public UnityEvent firstInput;
+
         #region Init
         private void Start()
         {
+            onStart.Invoke();
+        }
+
+        public void StartNewGame()
+        {
+            ClearReferences();
             CreateMap();
             PlacePlayer();
             PlaceCamera();
             CreateApple();
             targetDirection = Direction.right;
+        }
+
+        public void ClearReferences()
+        {
+            if (mapObject != null)
+                Destroy(mapObject);
+
+            if (playerObj != null)
+                Destroy(playerObj);
+
+            if (appleObj != null)
+                Destroy(appleObj);
+            foreach (var t in tail)
+            {
+                if (t.obj != null)
+                    Destroy(t.obj);
+            }
+            tail.Clear();
+            availableNodes.Clear();
+            grid = null;
         }
 
 
@@ -178,38 +210,27 @@ namespace SA
             if (up)
             {
                 setDirection(Direction.up);
-                //if (!isOpposite(Direction.up))
-                  //  curdirection = Direction.up;
             }
             else if (down)
             {
                 setDirection(Direction.down);
-                //if (!isOpposite(Direction.down))
-                //    curdirection = Direction.down;
-
             }
             else if (left)
             {
                 setDirection(Direction.left);
-                //if (!isOpposite(Direction.left))
-                //    curdirection = Direction.left;
-
             }
             else if (right)
             {
                 setDirection(Direction.right);
-                //if (!isOpposite(Direction.right))
-                //    curdirection = Direction.right;
-
             }
         }
 
         void setDirection(Direction d)
         {
-            if(!isOpposite(d))
+            if (!isOpposite(d))
             {
                 targetDirection = d;
-                
+
             }
         }
         void MovePlayer()
@@ -236,12 +257,14 @@ namespace SA
             if (targetNode == null)
             {
                 // Game over
+                onGamOver.Invoke();
             }
             else
             {
                 if (isTailNode(targetNode))
                 {
                     // Game over
+                    onGamOver.Invoke();
                 }
                 else
                 {
