@@ -190,7 +190,14 @@ namespace SA
         private void Update()
         {
             if (isGameOver)
+            {
+                if(Input.GetKeyDown(KeyCode.R))
+                {
+                    onStart.Invoke();
+                }
                 return;
+            }
+               
             GetInput();
             SetPlayerDirection();
 
