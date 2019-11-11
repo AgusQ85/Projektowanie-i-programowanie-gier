@@ -119,10 +119,11 @@ namespace SA
             playerSprite = createSprite(playerColor);
             playerRender.sprite = playerSprite;
             playerRender.sortingOrder = 1;
-            playerObj.transform.position = GetNode(3, 3).worldPosition;
-            playerNode = GetNode(3, 3);
+           playerNode = GetNode(3, 3);
             PlacePlayerObject(playerObj, playerNode.worldPosition);
-            //playerObj.transform.position = playerNode.worldPosition;
+           
+           // PlacePlayerObject(playerObj, playerNode.worldPosition);
+            
             playerObj.transform.localScale = Vector3.one * 1.2f;
             tailParent = new GameObject("tailParent");
 
@@ -236,10 +237,13 @@ namespace SA
                 }
                 MoveTail();
                 PlacePlayerObject(playerObj, targetNode.worldPosition);
-
-                playerObj.transform.position = targetNode.worldPosition;
+                
                 playerNode = targetNode;
                 availableNodes.Remove(playerNode);
+
+                //PlacePlayerObject(playerObj, targetNode.worldPosition);
+
+                
                 if (isScore)
                 {
                     if (availableNodes.Count > 0)
@@ -254,7 +258,7 @@ namespace SA
 
                 }
                 // kod
-
+                
 
             }
         }
@@ -281,7 +285,7 @@ namespace SA
 
                 availableNodes.Remove(p.node);
                 PlacePlayerObject(p.obj, p.node.worldPosition);
-                //p.obj.transform.position = p.node.worldPosition;
+                
             }
         }
         #endregion
@@ -301,7 +305,7 @@ namespace SA
             int ran = Random.Range(0, availableNodes.Count);
             Node n = availableNodes[ran];
             PlacePlayerObject(appleObj, n.worldPosition);
-            appleObj.transform.position = n.worldPosition;
+           // appleObj.transform.position = n.worldPosition;
             appleNode = n;
         }
         Node GetNode(int x, int y)
@@ -318,9 +322,10 @@ namespace SA
             s.obj = new GameObject();
             s.obj.transform.parent = tailParent.transform;
             s.obj.transform.position = s.node.worldPosition;
-            s.obj.transform.localScale = Vector3.one * .95f;
+            s.obj.transform.localScale = Vector3.one * .85f;
+           // s.obj.transform.localScale = Vector3.one * .95f;
             SpriteRenderer r = s.obj.AddComponent<SpriteRenderer>();
-            r.sprite = createSprite(playerColor);
+            r.sprite = playerSprite;
             r.sortingOrder = 1;
 
             return s;
@@ -332,7 +337,7 @@ namespace SA
 
             txt.filterMode = FilterMode.Point;
             Rect rect = new Rect(0, 0, 1, 1);
-            return Sprite.Create(txt, rect, Vector2.zero, 1, 0, SpriteMeshType.FullRect);
+            return Sprite.Create(txt, rect, Vector2.one *.5f, 1, 0, SpriteMeshType.FullRect);
 
         }
         #endregion
