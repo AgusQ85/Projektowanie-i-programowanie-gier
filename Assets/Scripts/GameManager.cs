@@ -65,7 +65,8 @@ namespace SA
             PlacePlayer();
             PlaceCamera();
             CreateApple();
-            targetDirection = Direction.right;
+            // targetDirection = Direction.right;
+            isGameOver = false;
         }
 
         public void ClearReferences()
