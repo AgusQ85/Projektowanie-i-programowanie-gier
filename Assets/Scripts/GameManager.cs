@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-// git
+// Wersja działająca! Bez błędów. 
 
 namespace SA
 {
